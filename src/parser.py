@@ -91,7 +91,7 @@ def build_graph_json(graph: Dict[str, Node]) -> Dict[str, List[Dict]]:
     for class_name, node in graph.items():
         nodes_output.append({
             "id": class_name,
-            "role": node.role
+            "role": list(node.roles)
         })
 
     # Step 3: create edges based on consumption
@@ -124,7 +124,7 @@ def build_graph_json(graph: Dict[str, Node]) -> Dict[str, List[Dict]]:
 if __name__ == "__main__":
     # TODO: change to dynamically read path from frontend
     json_input = os.path.join(os.getcwd(), "data", "knit.json")
-    json_output = os.path.join(os.getcwd(), "out", "output1.json")
+    json_output = os.path.join(os.getcwd(), "out", "output2.json")
     
     with open(json_input) as f:
         data = json.load(f)
