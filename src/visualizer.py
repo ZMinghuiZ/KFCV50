@@ -2,19 +2,25 @@ import json
 import networkx as nx
 import matplotlib.pyplot as plt
 
-with open("frontend_graph.json") as f:
+with open("output1.json") as f:
     data = json.load(f)
 
 G = nx.DiGraph()
 
 # Add nodes
 for node in data["nodes"]:
-    G.add_node(node["id"], role=node["role"])
+    G.add_node(node["id"], **{"role": node.get("role", "neutral")})
 
 # Add edges
 for edge in data["edges"]:
-    target = edge["to"] if edge["to"] != "UNKNOWN" else "❓UNKNOWN"
-    G.add_edge(edge["from"], target, label=edge["label"])
+    source = edge["from"]
+    target = edge["to"] if edge["to"] != "UNKNOWN" else "UNKNOWN"
+    
+    # Ensure target node has role if not already added
+    if target not in G:
+        G.add_node(target, role="neutral")
+    
+    G.add_edge(source, target, label=edge["label"])
 
 # Draw the graph
 plt.figure(figsize=(16, 12))
