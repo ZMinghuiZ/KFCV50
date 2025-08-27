@@ -31,15 +31,19 @@ class Node:
             f"provides={self.provides}, consumes={self.consumes}, "
             f"composites={self.composites})"
         )
-
-def parse_knit_json(data: Dict[str, dict]) -> Dict[str, Node]:
-    graph: Dict[str, Node] = {}
+        
+def parse_knit_json(data: dict) -> dict[str, Node]:
+    graph: dict[str, Node] = {}
 
     for class_name, class_info in data.items():
         node = graph.setdefault(class_name, Node(class_name))
 
         # Parent (for inheritance — optional use)
         node.parents.update(class_info.get("parent", []))
+
+        # Composite: store composite accessors
+        for key, comp_type in class_info.get("composite", {}).items():
+            node.composites[key] = comp_type
 
         # Providers: this class provides some types
         for entry in class_info.get("providers", []):
@@ -64,7 +68,8 @@ def parse_knit_json(data: Dict[str, dict]) -> Dict[str, Node]:
             for injection in class_info["injections"].values():
                 extract_consumed_types(injection)
 
-        node.update_role()
+        # Update roles dynamically based on provides, consumes, and composites
+        node.update_roles()
 
     return graph
 
@@ -91,21 +96,23 @@ def build_graph_json(graph: Dict[str, Node]) -> Dict[str, List[Dict]]:
 
     # Step 3: create edges based on consumption
     for consumer_class, node in graph.items():
+        # edges from consumed types
         for consumed_type in node.consumes:
             provider_class = type_to_provider_class.get(consumed_type)
-            if provider_class:
-                edges_output.append({
-                    "from": consumer_class,
-                    "to": provider_class,
-                    "label": consumed_type
-                })
-            else:
-                # Optional: warn or add a dangling edge (missing provider)
-                edges_output.append({
-                    "from": consumer_class,
-                    "to": "UNKNOWN",
-                    "label": consumed_type
-                })
+            edges_output.append({
+                "from": consumer_class,
+                "to": provider_class if provider_class else "UNKNOWN",
+                "label": consumed_type
+            })
+
+        # edges from composites
+        for comp_accessor, comp_type in node.composites.items():
+            provider_class = type_to_provider_class.get(comp_type)
+            edges_output.append({
+                "from": consumer_class,
+                "to": provider_class if provider_class else "UNKNOWN",
+                "label": f"{comp_type} (COMPOSITE)"
+            })
 
     return {
         "nodes": nodes_output,
