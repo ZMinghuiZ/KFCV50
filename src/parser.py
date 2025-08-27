@@ -5,23 +5,32 @@ from collections import defaultdict
 
 
 class Node:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.provides: Set[str] = set()
         self.consumes: Set[str] = set()
         self.parents: Set[str] = set()
-        self.role: str = "neutral"
+        self.composites: Dict[str, str] = {}  # e.g., {'getStoreComponent': 'knit.demo.MemoryStoreComponent'}
+        self.roles: Set[str] = set()
 
-    def update_role(self):
-        if self.provides and self.consumes:
-            self.role = "both"
-        elif self.provides:
-            self.role = "provider"
-        elif self.consumes:
-            self.role = "consumer"
+    def update_roles(self):
+        self.roles.clear()
+        if self.provides:
+            self.roles.add("provider")
+        if self.consumes:
+            self.roles.add("consumer")
+        if self.composites:
+            self.roles.add("composite")
+        if not self.roles:
+            self.roles.add("neutral")
 
     def __repr__(self):
-        return f"Node(name={self.name}, role={self.role}, provides={self.provides}, consumes={self.consumes})"
+        roles_str = ",".join(sorted(self.roles))
+        return (
+            f"Node(name={self.name}, roles=[{roles_str}], "
+            f"provides={self.provides}, consumes={self.consumes}, "
+            f"composites={self.composites})"
+        )
 
 def parse_knit_json(data: Dict[str, dict]) -> Dict[str, Node]:
     graph: Dict[str, Node] = {}
