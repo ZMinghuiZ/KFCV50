@@ -2,146 +2,261 @@
   "nodes": [
     {
       "id": "knit/demo/AddCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/AuditLogger",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/CatCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/CdCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/CommandRegistry",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/CommitCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/EchoCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/EventBus",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/EventListenerManager",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/LogCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/LsCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MemoryFileSystem",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MemoryGitApplication",
-      "role": "consumer"
+      "role": [
+        "consumer"
+      ]
     },
     {
       "id": "knit/demo/MemoryObjectStore",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MemoryReferenceManager",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MemoryStoreComponent",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MkdirCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/MonitorComponent",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/ObjectGraphAnalyzer",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/ObjectIndexService",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/ObjectValidator",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/PerformanceMonitor",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/PwdCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/ReferenceHistoryTracker",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/RmCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/SampleCli",
-      "role": "both"
+      "role": [
+        "consumer",
+        "composite",
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/StagingArea",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/StatusCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/demo/TouchCommand",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/Option",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/DIStubImpl",
-      "role": "neutral"
+      "role": [
+        "neutral"
+      ]
     },
     {
       "id": "knit/LibKt",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/Loadable",
-      "role": "provider"
+      "role": [
+        "provider"
+      ]
     },
     {
       "id": "knit/DIGetterStubImpl",
-      "role": "neutral"
+      "role": [
+        "neutral"
+      ]
     }
   ],
   "edges": [
     {
       "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/MonitorComponent",
+      "label": "knit.demo.MonitorComponent"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/MemoryStoreComponent",
+      "label": "knit.demo.MemoryReferenceManager"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/MonitorComponent",
+      "label": "knit.demo.AuditLogger"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/MemoryStoreComponent",
+      "label": "knit.demo.MemoryObjectStore"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/PerformanceMonitor",
+      "label": "knit.demo.PerformanceMonitor"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
       "to": "knit/demo/MemoryStoreComponent",
       "label": "knit.demo.MemoryFileSystem"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/ObjectIndexService",
+      "label": "knit.demo.ObjectIndexService"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/ObjectValidator",
+      "label": "knit.demo.ObjectValidator"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/MonitorComponent",
+      "label": "knit.demo.EventBus"
+    },
+    {
+      "from": "knit/demo/MemoryGitApplication",
+      "to": "knit/demo/SampleCli",
+      "label": "knit.demo.SampleCli"
     },
     {
       "from": "knit/demo/MemoryGitApplication",
@@ -154,69 +269,14 @@
       "label": "knit.demo.ObjectGraphAnalyzer"
     },
     {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/MemoryStoreComponent",
-      "label": "knit.demo.MemoryObjectStore"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/ObjectValidator",
-      "label": "knit.demo.ObjectValidator"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/SampleCli",
-      "label": "knit.demo.SampleCli"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/MonitorComponent",
-      "label": "knit.demo.AuditLogger"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/MemoryStoreComponent",
-      "label": "knit.demo.MemoryReferenceManager"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/ObjectIndexService",
-      "label": "knit.demo.ObjectIndexService"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/PerformanceMonitor",
-      "label": "knit.demo.PerformanceMonitor"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/MonitorComponent",
-      "label": "knit.demo.MonitorComponent"
-    },
-    {
-      "from": "knit/demo/MemoryGitApplication",
-      "to": "knit/demo/MonitorComponent",
-      "label": "knit.demo.EventBus"
-    },
-    {
       "from": "knit/demo/SampleCli",
       "to": "UNKNOWN",
       "label": "java.util.List"
     },
     {
       "from": "knit/demo/SampleCli",
-      "to": "knit/demo/StagingArea",
-      "label": "knit.demo.StagingArea"
-    },
-    {
-      "from": "knit/demo/SampleCli",
       "to": "knit/demo/MemoryStoreComponent",
-      "label": "knit.demo.MemoryFileSystem"
-    },
-    {
-      "from": "knit/demo/SampleCli",
-      "to": "knit/demo/StatusCommand",
-      "label": "knit.demo.GitCommand"
+      "label": "knit.demo.MemoryReferenceManager"
     },
     {
       "from": "knit/demo/SampleCli",
@@ -225,8 +285,8 @@
     },
     {
       "from": "knit/demo/SampleCli",
-      "to": "knit/demo/TouchCommand",
-      "label": "knit.demo.BasicCommand"
+      "to": "knit/demo/MemoryStoreComponent",
+      "label": "knit.demo.MemoryFileSystem"
     },
     {
       "from": "knit/demo/SampleCli",
@@ -240,13 +300,33 @@
     },
     {
       "from": "knit/demo/SampleCli",
-      "to": "knit/demo/MemoryStoreComponent",
-      "label": "knit.demo.MemoryReferenceManager"
+      "to": "knit/demo/TouchCommand",
+      "label": "knit.demo.BasicCommand"
     },
     {
       "from": "knit/demo/SampleCli",
       "to": "knit/demo/MonitorComponent",
       "label": "knit.demo.EventBus"
+    },
+    {
+      "from": "knit/demo/SampleCli",
+      "to": "knit/demo/StagingArea",
+      "label": "knit.demo.StagingArea"
+    },
+    {
+      "from": "knit/demo/SampleCli",
+      "to": "knit/demo/StatusCommand",
+      "label": "knit.demo.GitCommand"
+    },
+    {
+      "from": "knit/demo/SampleCli",
+      "to": "knit/demo/MemoryStoreComponent",
+      "label": "knit.demo.MemoryStoreComponent (COMPOSITE)"
+    },
+    {
+      "from": "knit/demo/SampleCli",
+      "to": "knit/demo/MonitorComponent",
+      "label": "knit.demo.MonitorComponent (COMPOSITE)"
     }
   ]
 }

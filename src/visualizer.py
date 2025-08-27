@@ -2,7 +2,7 @@ import json
 import networkx as nx
 import matplotlib.pyplot as plt
 
-with open("output1.json") as f:
+with open("output2.json") as f:
     data = json.load(f)
 
 G = nx.DiGraph()
@@ -33,10 +33,16 @@ color_map = {
     "both": "#ffd700",        # gold
     "neutral": "#d3d3d3"      # light gray
 }
-node_colors = [color_map.get(G.nodes[n]["role"], "#ffffff") for n in G.nodes]
+node_colors = [
+    color_map.get(",".join(sorted(G.nodes[n]["role"])), "#ffffff")
+    for n in G.nodes
+]
 
 nx.draw(G, pos, with_labels=True, node_color=node_colors, node_size=800, font_size=8, arrows=True)
 nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): d["label"] for u, v, d in G.edges(data=True)}, font_size=6)
 plt.title("DI Graph")
-plt.tight_layout()
+fig, ax = plt.subplots(figsize=(12,12))
+nx.draw(G, pos, ax=ax, with_labels=True, node_color=node_colors, arrows=True)
+fig.tight_layout()
+
 plt.show()
