@@ -26,10 +26,11 @@ class ParameterInfo:
 
 
 class ClassDetailInfo:
-    def __init__(self, name, parent_class=None, is_provider=False, parameters=None):
+    def __init__(self, name, parent_class=None, is_provider=False, provider_class=None, parameters=None):
         self.name = name
         self.parent_class = parent_class
         self.is_provider = is_provider
+        self.provider_class = provider_class
         self.parameters = parameters or []
     
     def __repr__(self):
@@ -40,6 +41,7 @@ class ClassDetailInfo:
             "name": self.name,
             "parent_class": self.parent_class,
             "is_provider": self.is_provider,
+            "provider_class": self.provider_class,
             "parameters": [param.to_dict() for param in self.parameters]
         }
 
@@ -141,12 +143,18 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
         
         # Check if the class itself is a provider
         is_provider = False
+        provider_class = None
         parameters = []
         
         if 'providers' in class_info and len(class_info['providers']) > 0:
             # Find the first provider that provides the class itself
             for provider in class_info['providers']:
                 provider_name = provider.get('provider', '')
+                
+                # Extract provider_class from the provider string (right side of ->)
+                if ' -> ' in provider_name:
+                    provider_class = provider_name.split(' -> ')[-1].strip()
+                
                 # Check if this provider provides the class itself
                 # Look for patterns like "ClassName.<init> -> ClassName" or "-> ClassName"
                 simple_class_name = class_name.split('/')[-1]  # Get the last part after /
@@ -180,6 +188,7 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
             name=class_name,
             parent_class=parent_class,
             is_provider=is_provider,
+            provider_class=provider_class,
             parameters=parameters
         )
         
