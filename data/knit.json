@@ -1,0 +1,637 @@
+{
+  "knit/demo/AddCommand": {
+    "parent": [
+      "knit.demo.GitCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.AddCommand.<init> -> knit.demo.GitCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem",
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.StagingArea"
+        ]
+      }
+    ]
+  },
+  "knit/demo/AuditLogger": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.AuditLogger.<init> -> knit.demo.AuditLogger",
+        "parameters": [
+          "knit.demo.EventBus"
+        ]
+      }
+    ]
+  },
+  "knit/demo/CatCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.CatCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/CdCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.CdCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/CommandRegistry": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.CommandRegistry.<init> -> knit.demo.CommandRegistry",
+        "parameters": [
+          "java.util.List<knit.demo.GitCommand>",
+          "java.util.List<knit.demo.BasicCommand>"
+        ]
+      }
+    ]
+  },
+  "knit/demo/CommitCommand": {
+    "parent": [
+      "knit.demo.GitCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.CommitCommand.<init> -> knit.demo.GitCommand",
+        "parameters": [
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.StagingArea",
+          "knit.demo.MemoryReferenceManager",
+          "knit.demo.ReferenceHistoryTracker"
+        ]
+      }
+    ]
+  },
+  "knit/demo/EchoCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.EchoCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/EventBus": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.EventBus.<init> -> knit.demo.EventBus"
+      }
+    ]
+  },
+  "knit/demo/EventListenerManager": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.EventListenerManager.<init> -> knit.demo.EventListenerManager",
+        "parameters": [
+          "knit.demo.EventBus",
+          "knit.demo.AuditLogger",
+          "knit.demo.PerformanceMonitor"
+        ]
+      }
+    ]
+  },
+  "knit/demo/LogCommand": {
+    "parent": [
+      "knit.demo.GitCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.LogCommand.<init> -> knit.demo.GitCommand",
+        "parameters": [
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.MemoryReferenceManager"
+        ]
+      }
+    ]
+  },
+  "knit/demo/LsCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.LsCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/MemoryFileSystem": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem"
+      }
+    ]
+  },
+  "knit/demo/MemoryGitApplication": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "injections": {
+      "getCli": {
+        "methodId": "knit.demo.SampleCli.<init> -> knit.demo.SampleCli (GLOBAL)",
+        "parameters": [
+          {
+            "methodId": "knit.demo.MonitorComponent.<init> -> knit.demo.MonitorComponent (GLOBAL)",
+            "parameters": [
+              {
+                "methodId": "knit.demo.EventBus.<init> -> knit.demo.EventBus (GLOBAL)"
+              },
+              {
+                "methodId": "knit.demo.AuditLogger.<init> -> knit.demo.AuditLogger (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.EventBus.<init> -> knit.demo.EventBus (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.PerformanceMonitor.<init> -> knit.demo.PerformanceMonitor (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.EventBus.<init> -> knit.demo.EventBus (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.ObjectGraphAnalyzer.<init> -> knit.demo.ObjectGraphAnalyzer (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.ObjectValidator.<init> -> knit.demo.ObjectValidator (GLOBAL)",
+                    "parameters": [
+                      {
+                        "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                      },
+                      {
+                        "methodId": "knit.demo.ObjectIndexService.<init> -> knit.demo.ObjectIndexService (GLOBAL)",
+                        "parameters": [
+                          {
+                            "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "knit/demo/MemoryObjectStore": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore"
+      }
+    ]
+  },
+  "knit/demo/MemoryReferenceManager": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager"
+      }
+    ]
+  },
+  "knit/demo/MemoryStoreComponent": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MemoryStoreComponent.<init> -> knit.demo.MemoryStoreComponent",
+        "parameters": [
+          "knit.demo.MemoryFileSystem",
+          "knit.demo.MemoryReferenceManager",
+          "knit.demo.MemoryObjectStore"
+        ]
+      },
+      {
+        "provider": "knit.demo.MemoryStoreComponent.getFileSystem -> knit.demo.MemoryFileSystem"
+      },
+      {
+        "provider": "knit.demo.MemoryStoreComponent.getRefManager -> knit.demo.MemoryReferenceManager"
+      },
+      {
+        "provider": "knit.demo.MemoryStoreComponent.getObjectStore -> knit.demo.MemoryObjectStore"
+      }
+    ]
+  },
+  "knit/demo/MkdirCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MkdirCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/MonitorComponent": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.MonitorComponent.<init> -> knit.demo.MonitorComponent",
+        "parameters": [
+          "knit.demo.EventBus",
+          "knit.demo.AuditLogger",
+          "knit.demo.PerformanceMonitor",
+          "knit.demo.ObjectGraphAnalyzer"
+        ]
+      },
+      {
+        "provider": "knit.demo.MonitorComponent.getEventBus -> knit.demo.EventBus"
+      },
+      {
+        "provider": "knit.demo.MonitorComponent.getAuditLogger -> knit.demo.AuditLogger"
+      },
+      {
+        "provider": "knit.demo.MonitorComponent.getPerformanceMonitor -> knit.demo.PerformanceMonitor"
+      },
+      {
+        "provider": "knit.demo.MonitorComponent.getObjectGraphAnalyzer -> knit.demo.ObjectGraphAnalyzer"
+      }
+    ]
+  },
+  "knit/demo/ObjectGraphAnalyzer": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.ObjectGraphAnalyzer.<init> -> knit.demo.ObjectGraphAnalyzer",
+        "parameters": [
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.ObjectValidator"
+        ]
+      }
+    ]
+  },
+  "knit/demo/ObjectIndexService": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.ObjectIndexService.<init> -> knit.demo.ObjectIndexService",
+        "parameters": [
+          "knit.demo.MemoryObjectStore"
+        ]
+      }
+    ]
+  },
+  "knit/demo/ObjectValidator": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.ObjectValidator.<init> -> knit.demo.ObjectValidator",
+        "parameters": [
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.ObjectIndexService"
+        ]
+      }
+    ]
+  },
+  "knit/demo/PerformanceMonitor": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.PerformanceMonitor.<init> -> knit.demo.PerformanceMonitor",
+        "parameters": [
+          "knit.demo.EventBus"
+        ]
+      }
+    ]
+  },
+  "knit/demo/PwdCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.PwdCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/ReferenceHistoryTracker": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.ReferenceHistoryTracker.<init> -> knit.demo.ReferenceHistoryTracker",
+        "parameters": [
+          "knit.demo.MemoryReferenceManager",
+          "knit.demo.EventBus"
+        ]
+      }
+    ]
+  },
+  "knit/demo/RmCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.RmCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/demo/SampleCli": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "composite": {
+      "public getMonitorComponent": "knit.demo.MonitorComponent"
+    },
+    "injections": {
+      "getCommandRegistry": {
+        "methodId": "knit.demo.CommandRegistry.<init> -> knit.demo.CommandRegistry (GLOBAL)",
+        "parameters": [
+          {
+            "methodId": "knit.internal.MultiBindingBuilder.list -> java.util.List (MULTI)",
+            "parameters": [
+              {
+                "methodId": "knit.demo.CommitCommand.<init> -> knit.demo.GitCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.StagingArea.<init> -> knit.demo.StagingArea (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.ReferenceHistoryTracker.<init> -> knit.demo.ReferenceHistoryTracker (GLOBAL)",
+                    "parameters": [
+                      {
+                        "methodId": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager (GLOBAL)"
+                      },
+                      {
+                        "methodId": "knit.demo.MonitorComponent.getEventBus -> knit.demo.EventBus (COMPOSITE)",
+                        "wayToMethod": "getMonitorComponent.getEventBus"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.LogCommand.<init> -> knit.demo.GitCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.StatusCommand.<init> -> knit.demo.GitCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.MemoryObjectStore.<init> -> knit.demo.MemoryObjectStore (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.StagingArea.<init> -> knit.demo.StagingArea (GLOBAL)"
+                  },
+                  {
+                    "methodId": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager (GLOBAL)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "methodId": "knit.internal.MultiBindingBuilder.list -> java.util.List (MULTI)",
+            "parameters": [
+              {
+                "methodId": "knit.demo.CdCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.EchoCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.LsCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.MkdirCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.PwdCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.RmCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              },
+              {
+                "methodId": "knit.demo.TouchCommand.<init> -> knit.demo.BasicCommand (GLOBAL)",
+                "parameters": [
+                  {
+                    "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "getFileSystem": {
+        "methodId": "knit.demo.MemoryFileSystem.<init> -> knit.demo.MemoryFileSystem (GLOBAL)"
+      },
+      "getRefManager": {
+        "methodId": "knit.demo.MemoryReferenceManager.<init> -> knit.demo.MemoryReferenceManager (GLOBAL)"
+      }
+    },
+    "providers": [
+      {
+        "provider": "knit.demo.SampleCli.<init> -> knit.demo.SampleCli",
+        "parameters": [
+          "knit.demo.MonitorComponent"
+        ]
+      }
+    ]
+  },
+  "knit/demo/StagingArea": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.StagingArea.<init> -> knit.demo.StagingArea"
+      }
+    ]
+  },
+  "knit/demo/StatusCommand": {
+    "parent": [
+      "knit.demo.GitCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.StatusCommand.<init> -> knit.demo.GitCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem",
+          "knit.demo.MemoryObjectStore",
+          "knit.demo.StagingArea",
+          "knit.demo.MemoryReferenceManager"
+        ]
+      }
+    ]
+  },
+  "knit/demo/TouchCommand": {
+    "parent": [
+      "knit.demo.BasicCommand"
+    ],
+    "providers": [
+      {
+        "provider": "knit.demo.TouchCommand.<init> -> knit.demo.BasicCommand",
+        "parameters": [
+          "knit.demo.MemoryFileSystem"
+        ]
+      }
+    ]
+  },
+  "knit/Option": {
+    "parent": [
+      "kotlin.properties.ReadOnlyProperty"
+    ],
+    "providers": [
+      {
+        "provider": "knit.Option.<init> -> knit.Option<out T0>"
+      },
+      {
+        "provider": "priority: 1 knit.Option.<init> -> knit.Option<out T0>",
+        "parameters": [
+          "T0"
+        ]
+      }
+    ]
+  },
+  "knit/DIStubImpl": {
+    "parent": [
+      "knit.AbsDIStub"
+    ]
+  },
+  "knit/LibKt": {
+    "providers": [
+      {
+        "provider": "knit.LibKt.provideLazy -> kotlin.Lazy<T0>",
+        "parameters": [
+          "kotlin.jvm.functions.Function0<T0>"
+        ]
+      }
+    ]
+  },
+  "knit/Loadable": {
+    "parent": [
+      "java.lang.Object"
+    ],
+    "providers": [
+      {
+        "provider": "knit.Loadable.<init> -> knit.Loadable<out T0>",
+        "parameters": [
+          "kotlin.jvm.functions.Function0<out T0>"
+        ]
+      }
+    ]
+  },
+  "knit/DIGetterStubImpl": {
+    "parent": [
+      "knit.AbsDIStub"
+    ]
+  }
+}
