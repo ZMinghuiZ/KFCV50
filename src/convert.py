@@ -44,6 +44,22 @@ class ClassDetailInfo:
         }
 
 
+class SubClassInfo:
+    def __init__(self, parent_class, child_classes=None):
+        self.parent_class = parent_class
+        self.child_classes = child_classes or []
+    
+    def __repr__(self):
+        return f"SubClassInfo(parent_class='{self.parent_class}', child_classes={self.child_classes})"
+    
+    def to_dict(self):
+        return {
+            "parent_class": self.parent_class,
+            "child_classes": [child.to_dict() for child in self.child_classes],
+            "count": len(self.child_classes)
+        }
+
+
 
 def get_all_base_classes(json_file_path="data/knit.json"):
     """
@@ -180,6 +196,60 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
         error_msg = str(e)
         return json.dumps({"error": error_msg})
 
+def get_all_child_classes(json_file_path="data/knit.json", class_name=None):
+    """
+    Gets all child classes that inherit from the specified parent class.
+    
+    Args:
+        json_file_path (str): Path to the knit.json file
+        class_name (str): Name of the parent class to find children for
+        
+    Returns:
+        str: JSON string for API consumption
+    """
+    if not class_name:
+        error_msg = "Parent class name is required"
+        return json.dumps({"error": error_msg})
+    
+    try:
+        # Read the JSON file
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        
+        child_classes = []
+        
+        # Iterate through all classes in the JSON
+        for current_class_name, class_info in data.items():
+            # Check if the class has a parent field
+            if 'parent' in class_info:
+                parent_list = class_info['parent']
+                # Check if any parent matches the given class name
+                if parent_list and len(parent_list) > 0:
+                    for parent in parent_list:
+                        if parent == class_name:
+                            # Check if it has providers field
+                            has_providers = 'providers' in class_info and len(class_info['providers']) > 0
+                            child_classes.append(ClassInfo(current_class_name, has_providers))
+                            break  # Found a match, no need to check other parents
+        
+        # Create SubClassInfo object
+        sub_class_info = SubClassInfo(
+            parent_class=class_name,
+            child_classes=child_classes
+        )
+        
+        # Return as JSON string
+        return json.dumps(sub_class_info.to_dict(), indent=2)
+    
+    except FileNotFoundError:
+        error_msg = f"File {json_file_path} not found"
+        return json.dumps({"error": error_msg})
+    except json.JSONDecodeError:
+        error_msg = f"Invalid JSON format in {json_file_path}"
+        return json.dumps({"error": error_msg})
+    except Exception as e:
+        error_msg = str(e)
+        return json.dumps({"error": error_msg})
 
 def _is_parameter_provider(data, param_name):
     """
@@ -209,11 +279,12 @@ def _is_parameter_provider(data, param_name):
 
 # Example usage
 if __name__ == "__main__":
+    
     # Test get_all_base_classes:
-    # print("get_all_base_classes:")
-    # json_result = get_all_base_classes("data/knit.json")
-    # print(json_result)
-    # print("\n" + "="*60 + "\n")
+    print("get_all_base_classes:")
+    json_result = get_all_base_classes("data/knit.json")
+    print(json_result)
+    print("\n" + "="*60 + "\n")
     
     # Test get_class_info function with different classes
     test_classes = ["knit/demo/MemoryStoreComponent"]
@@ -222,3 +293,11 @@ if __name__ == "__main__":
         json_detail = get_class_info("data/knit.json", test_class)
         print(json_detail)
         print("\n" + "-"*40 + "\n")
+    
+    # Test get_all_child_classes function
+    parent_classes = ["java.lang.Object", "knit.demo.GitCommand", "knit.demo.BasicCommand"]
+    for parent_class in parent_classes:
+        print(f"get_all_child_classes for '{parent_class}':")
+        json_children = get_all_child_classes("data/knit.json", parent_class)
+        print(json_children)
+        print("\n" + "="*60 + "\n")
