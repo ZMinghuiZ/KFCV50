@@ -7,7 +7,11 @@ class ClassInfo:
         self.is_provider = is_provider
     
     def __repr__(self):
-        return f"ClassInfo(name={self.name}, is_provider={self.is_provider})"
+        return f"ClassInfo(name='{self.name}', is_provider={self.is_provider})"
+    
+    def to_dict(self):
+        return {"name": self.name, "is_provider": self.is_provider}
+
 
 
 def get_all_base_classes(json_file_path="data/knit.json", return_as_json=False):
@@ -16,10 +20,10 @@ def get_all_base_classes(json_file_path="data/knit.json", return_as_json=False):
     
     Args:
         json_file_path (str): Path to the knit.json file
-        return_as_json (bool): If True, returns JSON string; if False, returns list
+        return_as_json (bool): If True, returns JSON string; if False, returns list of ClassInfo objects
         
     Returns:
-        list or str: List of class names or JSON string for API consumption
+        list or str: List of ClassInfo objects or JSON string for API consumption
     """
     try:
         # Read the JSON file
@@ -35,12 +39,14 @@ def get_all_base_classes(json_file_path="data/knit.json", return_as_json=False):
                 parent_list = class_info['parent']
                 # Check if the parent is java.lang.Object
                 if parent_list and len(parent_list) > 0 and parent_list[0] == "java.lang.Object":
-                    base_classes.append(class_name)
+                    # Check if it has providers field
+                    has_providers = 'providers' in class_info and len(class_info['providers']) > 0
+                    base_classes.append(ClassInfo(class_name, has_providers))
         
         # Return as JSON string if requested
         if return_as_json:
             result = {
-                "base_classes": base_classes,
+                "base_classes": [cls.to_dict() for cls in base_classes],
                 "count": len(base_classes),
                 "parent_class": "java.lang.Object"
             }
@@ -58,7 +64,12 @@ def get_all_base_classes(json_file_path="data/knit.json", return_as_json=False):
         print(f"Error reading file: {e}")
         return [] if not return_as_json else json.dumps({"error": str(e), "base_classes": [], "count": 0})
 
+def get_class_info(json_file_path="data/knit.json", class_name=None, return_as_json=False):
+
+
 # Example usage
 if __name__ == "__main__":
+    # Get as JSON string for API
     json_result = get_all_base_classes(json_file_path="data/knit.json", return_as_json=True)
+    print("get_all_base_classes: ")
     print(json_result)
