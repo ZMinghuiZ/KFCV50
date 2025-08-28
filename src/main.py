@@ -1,10 +1,16 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 from convert import get_all_base_classes, get_class_info, get_all_child_classes
+from node_graph_parser import get_overall_graph
 import json
 import os
 
 app = FastAPI(title="Class Info API", version="1.0.0")
+
+@app.get("/graph")
+async def get_graph():
+    result = get_overall_graph("data/knit.json")
+    return JSONResponse(content=json.loads(result))
 
 @app.get("/base-classes")
 async def get_base_classes():
