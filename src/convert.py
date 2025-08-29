@@ -25,13 +25,27 @@ class ParameterInfo:
         return {"name": self.name, "is_provider": self.is_provider}
 
 
+class InjectionInfo:
+    def __init__(self, name, status=None):
+        self.name = name
+        self.status = status
+    
+    def __repr__(self):
+        return f"InjectionInfo(name='{self.name}', status='{self.status}')"
+    
+    def to_dict(self):
+        return {"name": self.name, "status": self.status}
+
+
 class ClassDetailInfo:
-    def __init__(self, name, parent_class=None, is_provider=False, provider_class=None, parameters=None):
+    def __init__(self, name, parent_class=None, is_provider=False, provider_class=None, parameters=None, components=None, injections=None):
         self.name = name
         self.parent_class = parent_class
         self.is_provider = is_provider
         self.provider_class = provider_class
         self.parameters = parameters or []
+        self.components = components or []
+        self.injections = injections or []
     
     def __repr__(self):
         return f"ClassDetailInfo(name='{self.name}', parent_class='{self.parent_class}', is_provider={self.is_provider}, parameters={self.parameters})"
@@ -42,7 +56,9 @@ class ClassDetailInfo:
             "parent_class": self.parent_class,
             "is_provider": self.is_provider,
             "provider_class": self.provider_class,
-            "parameters": [param.to_dict() for param in self.parameters]
+            "parameters": [param.to_dict() for param in self.parameters],
+            "components": self.components,
+            "injections": [injection.to_dict() for injection in self.injections]
         }
 
 
@@ -183,13 +199,46 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
                             parameters.append(ParameterInfo(param_name, param_is_provider))
                     break
         
+        # Extract components from composite field
+        components = []
+        if 'composite' in class_info:
+            composite_data = class_info['composite']
+            for key, component_class in composite_data.items():
+                components.append(component_class)
+        
+        # Extract injections from injections field (first layer only)
+        injections = []
+        if 'injections' in class_info:
+            injections_data = class_info['injections']
+            for injection_key, injection_value in injections_data.items():
+                if isinstance(injection_value, dict) and 'methodId' in injection_value:
+                    method_id = injection_value['methodId']
+                    
+                    # Extract class name from methodId
+                    # Example: "knit.demo.CommandRegistry.<init> -> knit.demo.CommandRegistry (GLOBAL)"
+                    if ' -> ' in method_id and '(' in method_id:
+                        # Split by ' -> ' and get the right part
+                        right_part = method_id.split(' -> ')[1]
+                        # Split by '(' and get the left part (class name)
+                        class_name = right_part.split(' (')[0].strip()
+                        # Extract status from parentheses
+                        status_part = right_part.split(' (')[1].replace(')', '').strip()
+                        
+                        injections.append(InjectionInfo(class_name, status_part))
+                    elif ' -> ' in method_id:
+                        # Fallback: just get the class name without status
+                        class_name = method_id.split(' -> ')[1].strip()
+                        injections.append(InjectionInfo(class_name, None))
+        
         # Create ClassDetailInfo object
         detail_info = ClassDetailInfo(
             name=class_name,
             parent_class=parent_class,
             is_provider=is_provider,
             provider_class=provider_class,
-            parameters=parameters
+            parameters=parameters,
+            components=components,
+            injections=injections
         )
         
         # Return as JSON string
