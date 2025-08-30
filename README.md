@@ -1,64 +1,86 @@
-# KFCV50 - Interactive Dependency Visualization Tool
+# KFCV50 - TikTok Knit DI Framework Visualization Tool
 
 **TikTok-TechJam-2025**  
-Advanced visualization and analysis tool built for TikTok's Dependency Injection Framework Knit
+A comprehensive visualization tool for TikTok's open-source Knit Dependency Injection Framework, designed to help developers understand, analyze, and optimize dependency structures in any Knit-based project.
 
 ## Problem Statement
 
-Modern software development involves complex dependency relationships that are difficult to understand and navigate manually, particularly in large-scale enterprise applications using dependency injection frameworks. Developers face significant challenges when:
+**TikTok TechJam 2025 Challenge**: Develop a visualization tool for TikTok's open-source dependency injection framework, Knit, that helps developers better understand, analyze, and optimize their projects' dependency structures.
 
-- **Analyzing Complex Dependencies**: Understanding intricate relationships between classes, providers, and consumers in dependency injection systems
-- **Detecting Circular Dependencies**: Identifying problematic circular references that can cause build failures and runtime issues
-- **Exploring Class Hierarchies**: Navigating inheritance patterns and provider-consumer relationships across large codebases
-- **Impact Analysis**: Understanding how changes to one component affect interconnected modules and dependencies
-- **Debugging DI Issues**: Troubleshooting dependency injection configuration problems and missing providers
-- **Visualizing Large Systems**: Comprehending the overall architecture and dependency flow in complex applications
+### Background
 
-KFCV50 solves these problems by providing a comprehensive full-stack solution that analyzes Knit dependency injection data and presents it through an interactive, web-based visualization interface.
+Dependency injection (DI) is a crucial design pattern in modern software development, especially for large-scale applications. It promotes loose coupling, testability, and maintainability by providing objects with their dependencies rather than having them create or find dependencies themselves. As applications grow, managing these dependencies becomes increasingly complex and difficult to track.
+
+**Knit** is TikTok's open-source dependency injection framework for JVM platforms, including Android. Unlike other DI frameworks such as Dagger or Koin, Knit uses a unique approach by directly modifying bytecode to inject dependencies without generating intermediate proxies. This results in better performance and cleaner code, with dependency injection that performs comparably to hand-written code.
+
+### The Challenge
+
+Knit delivers excellent performance through its unique bytecode manipulation approach. However, without proper visibility tools, critical issues may go undetected, leading to:
+
+- **Tightly Coupled Code**: Dependencies become interconnected in ways that are hard to understand and modify
+- **Performance Inefficiencies**: Circular or unnecessary dependencies that impact application performance
+- **Slow Developer Onboarding**: New contributors struggle to understand complex dependency relationships
+- **Hidden Structural Problems**: Dependency issues that only surface during runtime or under specific conditions
+
+As Knit continues to evolve and support more complex use cases, there's a growing need for tooling that provides deeper visibility into how dependencies are wired and interact, especially for large or rapidly changing projects.
+
+### Our Solution
+
+KFCV50 addresses these challenges by providing a comprehensive visualization tool that offers:
+
+- **Clear Visual Representations**: Intuitive dependency graphs that make complex relationships easy to understand
+- **Issue Detection**: Automatic identification of circular dependencies, unused components, and structural problems
+- **Performance Analysis**: Insights into dependency complexity and suggestions for optimization
+- **Developer Productivity**: Tools that help both new and experienced developers understand and work with Knit-based projects more effectively
+
+This tool is designed to work with any project that uses TikTok's Knit framework, making dependency relationships transparent and actionable to improve code quality, maintainability, and developer productivity.
 
 ## Features & Functionality
 
 ### Backend API Services
-- **RESTful API**: FastAPI-based backend providing comprehensive dependency analysis endpoints
-- **JSON Data Processing**: Intelligent parsing and analysis of Knit dependency injection configuration files
-- **Class Hierarchy Analysis**: Deep analysis of inheritance relationships, providers, and consumers
-- **Dependency Graph Generation**: Automated creation of node-link graph structures for visualization
-- **File Upload Management**: Secure handling of dependency configuration file uploads
-- **Real-time Analysis**: Live processing and analysis of uploaded dependency data
+- **RESTful API**: FastAPI-based backend providing comprehensive analysis of Knit DI framework configurations
+- **Knit JSON Data Processing**: Intelligent parsing and analysis of Knit dependency injection configuration files from any Knit-based project
+- **Knit Class Hierarchy Analysis**: Deep analysis of inheritance relationships, providers, and consumers in Knit systems
+- **Dependency Structure Visualization**: Automated creation of node-link graph structures optimized for Knit dependency visualization
+- **Multi-Project Support**: Secure handling of Knit configuration file uploads from different projects
+- **Real-time Analysis**: Live processing and analysis of uploaded Knit dependency data with performance insights
 
 ### Frontend Visualization
-- **Interactive Dependency Graph**: Force-directed graph layout using D3.js for intuitive dependency visualization
-- **Auto-Fit Viewport**: Automatically adjusts zoom and positioning to fit all nodes in the view
-- **Node Dragging**: Interactive drag-and-drop functionality for repositioning graph nodes
-- **Zoom & Pan**: Seamless zoom in/out and pan navigation with synchronized transformations
-- **Dynamic Layout**: Collision detection and optimized spacing for clear visualization of large graphs
+- **Interactive Knit Dependency Graph**: Force-directed graph layout using D3.js for intuitive Knit dependency visualization across any project
+- **Multi-Project Support**: Seamlessly switch between and analyze different Knit-based projects
+- **Auto-Fit Viewport**: Automatically adjusts zoom and positioning to fit all Knit nodes in the view
+- **Node Dragging**: Interactive drag-and-drop functionality for repositioning Knit graph nodes
+- **Zoom & Pan**: Seamless zoom in/out and pan navigation with synchronized transformations for large Knit dependency systems
+- **Dynamic Layout**: Collision detection and optimized spacing for clear visualization of complex project structures
 
 ### Data Analysis Capabilities
-- **Circular Dependency Detection**: Identifies and highlights problematic circular dependencies
-- **Statistical Analysis**: Calculates metrics including total modules, dependencies, maximum depth, and average dependencies
-- **Provider-Consumer Mapping**: Detailed analysis of dependency injection provider and consumer relationships
-- **Component Analysis**: Examination of composite components and their relationships
-- **Injection Status Tracking**: Analysis of injection success/failure states and dependency resolution
+- **Circular Dependency Detection**: Identifies and highlights problematic circular dependencies in any Knit-based project
+- **Performance Analysis**: Calculates metrics including total modules, dependencies, maximum depth, and complexity scores
+- **Structural Optimization Suggestions**: Provides recommendations for improving dependency structure and performance
+- **Provider-Consumer Mapping**: Detailed analysis of Knit dependency injection relationships across project components
+- **Component Usage Analysis**: Examination of Knit composite components and their utilization patterns
+- **Injection Status Tracking**: Analysis of Knit injection success/failure states and dependency resolution across projects
+- **Cross-Project Comparison**: Tools to compare dependency patterns between different Knit-based projects
 
 ### API Endpoints
-- `GET /base-classes`: Fetch all base classes in the dependency system
-- `GET /class-info/{class_name}`: Get detailed information for specific classes
-- `GET /child-classes/{parent_class}`: Retrieve child classes and inheritance relationships
-- `POST /upload-knit-data`: Upload and process Knit dependency configuration files
+- `GET /base-classes`: Fetch all base classes in any Knit-based project's dependency system
+- `GET /class-info/{class_name}`: Get detailed information for specific Knit classes and their relationships
+- `GET /child-classes/{parent_class}`: Retrieve child classes and inheritance relationships in Knit projects
+- `POST /upload-knit-data`: Upload and process Knit dependency configuration files from any project using the framework
 
 ## Architecture Overview
 
 ### Backend (Python/FastAPI)
-- **FastAPI Framework**: High-performance async API framework
-- **Dependency Analysis Engine**: Custom algorithms for parsing Knit configuration data
-- **Graph Processing**: Node-graph generation and relationship mapping
-- **CORS Support**: Cross-origin resource sharing for frontend integration
+- **FastAPI Framework**: High-performance async API framework optimized for TikTok's Knit data processing
+- **Knit Dependency Analysis Engine**: Custom algorithms specifically designed for parsing TikTok's Knit configuration data
+- **Knit Graph Processing**: Node-graph generation and relationship mapping tailored for Knit dependency structures
+- **CORS Support**: Cross-origin resource sharing for frontend integration with Knit visualization
 
 ### Frontend (React/Next.js)
-- **Next.js 15.5.2**: React framework with App Router and Turbopack
-- **React 19.1.0**: Latest React with concurrent features
-- **Interactive Visualization**: D3.js-powered graph rendering
-- **Modern UI**: Tailwind CSS for responsive design
+- **Next.js 15.5.2**: React framework with App Router and Turbopack for TikTok Knit visualization
+- **React 19.1.0**: Latest React with concurrent features optimized for Knit graph rendering
+- **Interactive Knit Visualization**: D3.js-powered graph rendering specifically designed for TikTok's Knit dependencies
+- **Modern UI**: Tailwind CSS for responsive design tailored to Knit dependency exploration
 
 > 📖 **For detailed frontend documentation, see**: [Frontend README](KFCV50_Frontend/README.md)
 
@@ -186,21 +208,22 @@ npm run dev
 
 1. **Start Backend**: Ensure the FastAPI backend is running on `localhost:8000`
 2. **Start Frontend**: Launch the Next.js frontend on `localhost:3000`
-3. **Upload Data**: Navigate to the upload page and select a Knit JSON configuration file
-4. **Automatic Processing**: The system processes and analyzes the uploaded dependency data
-5. **Interactive Visualization**: Explore the generated dependency graph with full interactivity
-6. **Dependency Analysis**: Review detected issues, circular dependencies, and relationship insights
+3. **Upload Knit Configuration**: Navigate to the upload page and select a Knit JSON configuration file from any project using TikTok's Knit framework
+4. **Automatic Analysis**: The system processes and analyzes the uploaded Knit dependency data, detecting structural issues and optimization opportunities
+5. **Interactive Visualization**: Explore the generated Knit dependency graph with full interactivity, including zoom, pan, and node manipulation
+6. **Dependency Insights**: Review detected issues, circular dependencies, performance suggestions, and structural insights for your Knit-based project
+7. **Export & Share**: Save analysis results and share findings with your development team
 
 ## Project Structure
 
 ```
 KFCV50/
-├── src/                          # Backend source code
-│   ├── main.py                   # FastAPI application entry point
-│   ├── convert.py                # Dependency analysis and parsing engine
-│   ├── node_graph_parser.py      # Graph generation and node relationship mapping
-│   └── data/                     # Data storage directory
-│       └── knit.json            # Uploaded dependency configuration files
+├── src/                          # Backend source code for TikTok Knit analysis
+│   ├── main.py                   # FastAPI application entry point for Knit API
+│   ├── convert.py                # TikTok Knit dependency analysis and parsing engine
+│   ├── node_graph_parser.py      # Knit graph generation and node relationship mapping
+│   └── data/                     # TikTok Knit data storage directory
+│       └── knit.json            # Uploaded TikTok Knit dependency configuration files
 ├── KFCV50_Frontend/             # Frontend application
 │   ├── src/app/                 # Next.js application source
 │   │   ├── components/          # React components
@@ -218,7 +241,9 @@ KFCV50/
 
 ## Contributing
 
-This project was developed for TikTok TechJam 2025. Contributions should follow the established patterns and maintain the high-quality standards set for enterprise-level dependency visualization tools.
+This project was developed for TikTok TechJam 2025 as a comprehensive solution for visualizing and analyzing TikTok's open-source Knit Dependency Injection Framework. The tool is designed to work with any project that uses Knit, providing developers with the visibility and insights needed to build better, more maintainable applications.
+
+Contributions should follow the established patterns and maintain the high-quality standards set for enterprise-level dependency visualization tools. We welcome improvements that enhance the tool's ability to help developers understand and optimize their Knit-based projects.
 
 ## License
 
