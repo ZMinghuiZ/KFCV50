@@ -25,13 +25,27 @@ class ParameterInfo:
         return {"name": self.name, "is_provider": self.is_provider}
 
 
+class InjectionInfo:
+    def __init__(self, name, status=None):
+        self.name = name
+        self.status = status
+    
+    def __repr__(self):
+        return f"InjectionInfo(name='{self.name}', status='{self.status}')"
+    
+    def to_dict(self):
+        return {"name": self.name, "status": self.status}
+
+
 class ClassDetailInfo:
-    def __init__(self, name, parent_class=None, is_provider=False, provider_class=None, parameters=None):
+    def __init__(self, name, parent_class=None, is_provider=False, provider_class=None, parameters=None, components=None, injections=None):
         self.name = name
         self.parent_class = parent_class
         self.is_provider = is_provider
         self.provider_class = provider_class
         self.parameters = parameters or []
+        self.components = components or []
+        self.injections = injections or []
     
     def __repr__(self):
         return f"ClassDetailInfo(name='{self.name}', parent_class='{self.parent_class}', is_provider={self.is_provider}, parameters={self.parameters})"
@@ -42,7 +56,9 @@ class ClassDetailInfo:
             "parent_class": self.parent_class,
             "is_provider": self.is_provider,
             "provider_class": self.provider_class,
-            "parameters": [param.to_dict() for param in self.parameters]
+            "parameters": [param.to_dict() for param in self.parameters],
+            "components": self.components,
+            "injections": [injection.to_dict() for injection in self.injections]
         }
 
 
@@ -65,49 +81,39 @@ class SubClassInfo:
 
 def get_all_base_classes(json_file_path="data/knit.json"):
     """
-    Reads the knit.json file and returns all classes whose parent class is java.lang.Object.
-    
-    Args:
-        json_file_path (str): Path to the knit.json file
-        
-    Returns:
-        str: JSON string for API consumption
+    Reads the knit.json file and returns classes grouped by their parent.
+    Each group key is the parent name, and its value is a list of classes with 'name' and 'is_provider'.
     """
     try:
-        # Read the JSON file
         with open(json_file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-        
-        base_classes = []
-        
-        # Iterate through all classes in the JSON
+
+        parent_groups = {}
         for class_name, class_info in data.items():
-            # Check if the class has a parent field
-            if 'parent' in class_info:
-                parent_list = class_info['parent']
-                # Check if the parent is java.lang.Object
-                if parent_list and len(parent_list) > 0 and parent_list[0] == "java.lang.Object":
-                    # Check if it has providers field
-                    has_providers = 'providers' in class_info and len(class_info['providers']) > 0
-                    base_classes.append(ClassInfo(class_name, has_providers))
-        
-        # Return as JSON string
-        result = {
-            "base_classes": [cls.to_dict() for cls in base_classes],
-            "count": len(base_classes),
-            "parent_class": "java.lang.Object"
-        }
+            parent = class_info.get('parent', [None])[0]
+            is_provider = bool(class_info.get('providers'))
+            entry = {"name": class_name, "is_provider": is_provider}
+            if parent not in parent_groups:
+                parent_groups[parent] = []
+            parent_groups[parent].append(entry)
+
+        # Optionally, add counts for each group
+        result = {parent: group for parent, group in parent_groups.items()}
+        result["group_count"] = len(parent_groups)
+        for parent in parent_groups:
+            result[f"{parent}_count"] = len(parent_groups[parent])
+
         return json.dumps(result, indent=2)
-        
+
     except FileNotFoundError:
         print(f"Error: File {json_file_path} not found.")
-        return json.dumps({"error": "File not found", "base_classes": [], "count": 0})
+        return json.dumps({"error": "File not found"})
     except json.JSONDecodeError:
         print(f"Error: Invalid JSON format in {json_file_path}.")
-        return json.dumps({"error": "Invalid JSON format", "base_classes": [], "count": 0})
+        return json.dumps({"error": "Invalid JSON format"})
     except Exception as e:
         print(f"Error reading file: {e}")
-        return json.dumps({"error": str(e), "base_classes": [], "count": 0})
+        return json.dumps({"error": str(e)})
 
 def get_class_info(json_file_path="data/knit.json", class_name=None):
     """
@@ -183,13 +189,164 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
                             parameters.append(ParameterInfo(param_name, param_is_provider))
                     break
         
+        # Extract components from composite field
+        components = []
+        if 'composite' in class_info:
+            composite_data = class_info['composite']
+            for key, component_class in composite_data.items():
+                components.append(component_class)
+
+        # Extract injections from injections field (top-level only, preserve methodId and status)
+        injections = []
+        if 'injections' in class_info:
+            injections_data = class_info['injections']
+            for injection_key, injection_value in injections_data.items():
+                if isinstance(injection_value, dict) and 'methodId' in injection_value:
+                    method_id = injection_value['methodId']
+                    # Extract status if present
+                    status = None
+                    if '(' in method_id and method_id.endswith(')'):
+                        status = method_id.split('(')[-1].replace(')', '').strip()
+                    # Extract class name from methodId
+                    if ' -> ' in method_id:
+                        class_name_inj = method_id.split(' -> ')[1].split(' (')[0].strip()
+                    else:
+                        class_name_inj = method_id
+                    injections.append(InjectionInfo(class_name_inj, status))
+        # Always use the queried class name
+        detail_info = ClassDetailInfo(
+            name=class_name,
+            parent_class=parent_class,
+            is_provider=is_provider,
+            provider_class=provider_class,
+            parameters=parameters,
+            components=components,
+            injections=injections
+        )
+        return json.dumps(detail_info.to_dict(), indent=2)
+    
+    except FileNotFoundError:
+        error_msg = f"File {json_file_path} not found"
+        return json.dumps({"error": error_msg})
+    except json.JSONDecodeError:
+        error_msg = f"Invalid JSON format in {json_file_path}"
+        return json.dumps({"error": error_msg})
+    except Exception as e:
+        error_msg = str(e)
+        return json.dumps({"error": error_msg})
+    """
+    Gets detailed information about a specific class including parent, providers, and parameters.
+    
+    Args:
+        json_file_path (str): Path to the knit.json file
+        class_name (str): Name of the class to get info for
+        
+    Returns:
+        str: JSON string for API consumption
+    """
+    if not class_name:
+        error_msg = "Class name is required"
+        return json.dumps({"error": error_msg})
+    
+    try:
+        # Read the JSON file
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        
+        # Check if the class exists
+        if class_name not in data:
+            error_msg = f"Class '{class_name}' not found"
+            return json.dumps({"error": error_msg})
+        
+        class_info = data[class_name]
+        
+        # Get parent class
+        parent_class = None
+        if 'parent' in class_info and len(class_info['parent']) > 0:
+            parent_class = class_info['parent'][0]
+        
+        # Check if the class itself is a provider
+        is_provider = False
+        provider_class = None
+        parameters = []
+        
+        if 'providers' in class_info and len(class_info['providers']) > 0:
+            # Find the first provider that provides the class itself
+            for provider in class_info['providers']:
+                provider_name = provider.get('provider', '')
+                
+                # Extract provider_class from the provider string (right side of ->)
+                if ' -> ' in provider_name:
+                    provider_class = provider_name.split(' -> ')[-1].strip()
+                
+                # Check if this provider provides the class itself
+                # Look for patterns like "ClassName.<init> -> ClassName" or "-> ClassName"
+                simple_class_name = class_name.split('/')[-1]  # Get the last part after /
+                
+                # Debug: let's see what we're comparing
+                # print(f"DEBUG: Checking provider: {provider_name}")
+                # print(f"DEBUG: Class name: {class_name}, Simple: {simple_class_name}")
+                
+                if (f"{class_name}.<init>" in provider_name and f"-> {class_name}" in provider_name) or \
+                   (f"{simple_class_name}.<init>" in provider_name and f"-> {simple_class_name}" in provider_name):
+                    is_provider = True
+                    # Get parameters for this provider
+                    if 'parameters' in provider:
+                        for param_name in provider['parameters']:
+                            # Check if this parameter is also a provider
+                            param_is_provider = _is_parameter_provider(data, param_name)
+                            parameters.append(ParameterInfo(param_name, param_is_provider))
+                    break
+                # Alternative: any provider in the providers list means it's a provider
+                else:
+                    # If we have any provider at all, consider it a provider
+                    is_provider = True
+                    if 'parameters' in provider:
+                        for param_name in provider['parameters']:
+                            param_is_provider = _is_parameter_provider(data, param_name)
+                            parameters.append(ParameterInfo(param_name, param_is_provider))
+                    break
+        
+        # Extract components from composite field
+        components = []
+        if 'composite' in class_info:
+            composite_data = class_info['composite']
+            for key, component_class in composite_data.items():
+                components.append(component_class)
+        
+        # Extract injections from injections field (first layer only)
+        injections = []
+        if 'injections' in class_info:
+            injections_data = class_info['injections']
+            for injection_key, injection_value in injections_data.items():
+                if isinstance(injection_value, dict) and 'methodId' in injection_value:
+                    method_id = injection_value['methodId']
+                    
+                    # Extract class name from methodId
+                    # Example: "knit.demo.CommandRegistry.<init> -> knit.demo.CommandRegistry (GLOBAL)"
+                    if ' -> ' in method_id and '(' in method_id:
+                        # Split by ' -> ' and get the right part
+                        right_part = method_id.split(' -> ')[1]
+                        # Split by '(' and get the left part (class name)
+                        class_name = right_part.split(' (')[0].strip()
+                        # Extract status from parentheses
+                        status_part = right_part.split(' (')[1].replace(')', '').strip()
+                        
+                        injections.append(InjectionInfo(class_name, status_part))
+                    elif ' -> ' in method_id:
+                        # Fallback: just get the class name without status
+                        class_name = method_id.split(' -> ')[1].strip()
+                        injections.append(InjectionInfo(class_name, None))
+        
         # Create ClassDetailInfo object
         detail_info = ClassDetailInfo(
             name=class_name,
             parent_class=parent_class,
             is_provider=is_provider,
             provider_class=provider_class,
-            parameters=parameters
+            parameters=parameters,
+            components=components,
+            injections=injections
         )
         
         # Return as JSON string
