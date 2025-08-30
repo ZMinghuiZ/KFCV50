@@ -106,6 +106,7 @@ def get_all_base_classes(json_file_path="data/knit.json"):
                     # Check if it has providers field
                     has_providers = 'providers' in class_info and len(class_info['providers']) > 0
                     base_classes.append(ClassInfo(class_name, has_providers))
+                
         
         # Return as JSON string
         result = {
@@ -205,32 +206,25 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
             composite_data = class_info['composite']
             for key, component_class in composite_data.items():
                 components.append(component_class)
-        
-        # Extract injections from injections field (first layer only)
+
+        # Extract injections from injections field (top-level only, preserve methodId and status)
         injections = []
         if 'injections' in class_info:
             injections_data = class_info['injections']
             for injection_key, injection_value in injections_data.items():
                 if isinstance(injection_value, dict) and 'methodId' in injection_value:
                     method_id = injection_value['methodId']
-                    
+                    # Extract status if present
+                    status = None
+                    if '(' in method_id and method_id.endswith(')'):
+                        status = method_id.split('(')[-1].replace(')', '').strip()
                     # Extract class name from methodId
-                    # Example: "knit.demo.CommandRegistry.<init> -> knit.demo.CommandRegistry (GLOBAL)"
-                    if ' -> ' in method_id and '(' in method_id:
-                        # Split by ' -> ' and get the right part
-                        right_part = method_id.split(' -> ')[1]
-                        # Split by '(' and get the left part (class name)
-                        class_name = right_part.split(' (')[0].strip()
-                        # Extract status from parentheses
-                        status_part = right_part.split(' (')[1].replace(')', '').strip()
-                        
-                        injections.append(InjectionInfo(class_name, status_part))
-                    elif ' -> ' in method_id:
-                        # Fallback: just get the class name without status
-                        class_name = method_id.split(' -> ')[1].strip()
-                        injections.append(InjectionInfo(class_name, None))
-        
-        # Create ClassDetailInfo object
+                    if ' -> ' in method_id:
+                        class_name_inj = method_id.split(' -> ')[1].split(' (')[0].strip()
+                    else:
+                        class_name_inj = method_id
+                    injections.append(InjectionInfo(class_name_inj, status))
+        # Always use the queried class name
         detail_info = ClassDetailInfo(
             name=class_name,
             parent_class=parent_class,
@@ -240,8 +234,6 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
             components=components,
             injections=injections
         )
-        
-        # Return as JSON string
         return json.dumps(detail_info.to_dict(), indent=2)
     
     except FileNotFoundError:
