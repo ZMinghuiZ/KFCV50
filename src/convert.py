@@ -81,49 +81,39 @@ class SubClassInfo:
 
 def get_all_base_classes(json_file_path="data/knit.json"):
     """
-    Reads the knit.json file and groups all classes by their parent class.
-    Returns a JSON object with arrays for each parent class, each containing the classes that inherit from it.
+    Reads the knit.json file and returns classes grouped by their parent.
+    Each group key is the parent name, and its value is a list of classes with 'name' and 'is_provider'.
     """
     try:
         with open(json_file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
 
         parent_groups = {}
-        # Iterate through all classes in the JSON
         for class_name, class_info in data.items():
-            # Check if the class has a parent field
-            if 'parent' in class_info:
-                parent_list = class_info['parent']
-                if parent_list and len(parent_list) > 0:
-                    parent_name = parent_list[0]
-                    if parent_name not in parent_groups:
-                        parent_groups[parent_name] = []
-                    # Retain all class info
-                    class_entry = {
-                        "class_name": class_name,
-                        **class_info
-                    }
-                    parent_groups[parent_name].append(class_entry)
+            parent = class_info.get('parent', [None])[0]
+            is_provider = bool(class_info.get('providers'))
+            entry = {"name": class_name, "is_provider": is_provider}
+            if parent not in parent_groups:
+                parent_groups[parent] = []
+            parent_groups[parent].append(entry)
 
-        # Format result as a list of parent groups
-        result = []
-        for parent_name, classes in parent_groups.items():
-            result.append({
-                "parent_class": parent_name,
-                "classes": classes,
-                "count": len(classes)
-            })
-        return json.dumps({"groups": result, "group_count": len(result)}, indent=2)
+        # Optionally, add counts for each group
+        result = {parent: group for parent, group in parent_groups.items()}
+        result["group_count"] = len(parent_groups)
+        for parent in parent_groups:
+            result[f"{parent}_count"] = len(parent_groups[parent])
+
+        return json.dumps(result, indent=2)
 
     except FileNotFoundError:
         print(f"Error: File {json_file_path} not found.")
-        return json.dumps({"error": "File not found", "groups": [], "group_count": 0})
+        return json.dumps({"error": "File not found"})
     except json.JSONDecodeError:
         print(f"Error: Invalid JSON format in {json_file_path}.")
-        return json.dumps({"error": "Invalid JSON format", "groups": [], "group_count": 0})
+        return json.dumps({"error": "Invalid JSON format"})
     except Exception as e:
         print(f"Error reading file: {e}")
-        return json.dumps({"error": str(e), "groups": [], "group_count": 0})
+        return json.dumps({"error": str(e)})
 
 def get_class_info(json_file_path="data/knit.json", class_name=None):
     """
