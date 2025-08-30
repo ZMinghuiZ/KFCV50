@@ -60,6 +60,8 @@ KFCV50 solves these problems by providing a comprehensive full-stack solution th
 - **Interactive Visualization**: D3.js-powered graph rendering
 - **Modern UI**: Tailwind CSS for responsive design
 
+> 📖 **For detailed frontend documentation, see**: [Frontend README](KFCV50_Frontend/README.md)
+
 ## Development Tools
 
 ### Backend Development
