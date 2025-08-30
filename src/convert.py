@@ -205,6 +205,124 @@ def get_class_info(json_file_path="data/knit.json", class_name=None):
             composite_data = class_info['composite']
             for key, component_class in composite_data.items():
                 components.append(component_class)
+
+        # Extract injections from injections field (top-level only, preserve methodId and status)
+        injections = []
+        if 'injections' in class_info:
+            injections_data = class_info['injections']
+            for injection_key, injection_value in injections_data.items():
+                if isinstance(injection_value, dict) and 'methodId' in injection_value:
+                    method_id = injection_value['methodId']
+                    # Extract status if present
+                    status = None
+                    if '(' in method_id and method_id.endswith(')'):
+                        status = method_id.split('(')[-1].replace(')', '').strip()
+                    # Extract class name from methodId
+                    if ' -> ' in method_id:
+                        class_name_inj = method_id.split(' -> ')[1].split(' (')[0].strip()
+                    else:
+                        class_name_inj = method_id
+                    injections.append(InjectionInfo(class_name_inj, status))
+        # Always use the queried class name
+        detail_info = ClassDetailInfo(
+            name=class_name,
+            parent_class=parent_class,
+            is_provider=is_provider,
+            provider_class=provider_class,
+            parameters=parameters,
+            components=components,
+            injections=injections
+        )
+        return json.dumps(detail_info.to_dict(), indent=2)
+    
+    except FileNotFoundError:
+        error_msg = f"File {json_file_path} not found"
+        return json.dumps({"error": error_msg})
+    except json.JSONDecodeError:
+        error_msg = f"Invalid JSON format in {json_file_path}"
+        return json.dumps({"error": error_msg})
+    except Exception as e:
+        error_msg = str(e)
+        return json.dumps({"error": error_msg})
+    """
+    Gets detailed information about a specific class including parent, providers, and parameters.
+    
+    Args:
+        json_file_path (str): Path to the knit.json file
+        class_name (str): Name of the class to get info for
+        
+    Returns:
+        str: JSON string for API consumption
+    """
+    if not class_name:
+        error_msg = "Class name is required"
+        return json.dumps({"error": error_msg})
+    
+    try:
+        # Read the JSON file
+        with open(json_file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+        
+        # Check if the class exists
+        if class_name not in data:
+            error_msg = f"Class '{class_name}' not found"
+            return json.dumps({"error": error_msg})
+        
+        class_info = data[class_name]
+        
+        # Get parent class
+        parent_class = None
+        if 'parent' in class_info and len(class_info['parent']) > 0:
+            parent_class = class_info['parent'][0]
+        
+        # Check if the class itself is a provider
+        is_provider = False
+        provider_class = None
+        parameters = []
+        
+        if 'providers' in class_info and len(class_info['providers']) > 0:
+            # Find the first provider that provides the class itself
+            for provider in class_info['providers']:
+                provider_name = provider.get('provider', '')
+                
+                # Extract provider_class from the provider string (right side of ->)
+                if ' -> ' in provider_name:
+                    provider_class = provider_name.split(' -> ')[-1].strip()
+                
+                # Check if this provider provides the class itself
+                # Look for patterns like "ClassName.<init> -> ClassName" or "-> ClassName"
+                simple_class_name = class_name.split('/')[-1]  # Get the last part after /
+                
+                # Debug: let's see what we're comparing
+                # print(f"DEBUG: Checking provider: {provider_name}")
+                # print(f"DEBUG: Class name: {class_name}, Simple: {simple_class_name}")
+                
+                if (f"{class_name}.<init>" in provider_name and f"-> {class_name}" in provider_name) or \
+                   (f"{simple_class_name}.<init>" in provider_name and f"-> {simple_class_name}" in provider_name):
+                    is_provider = True
+                    # Get parameters for this provider
+                    if 'parameters' in provider:
+                        for param_name in provider['parameters']:
+                            # Check if this parameter is also a provider
+                            param_is_provider = _is_parameter_provider(data, param_name)
+                            parameters.append(ParameterInfo(param_name, param_is_provider))
+                    break
+                # Alternative: any provider in the providers list means it's a provider
+                else:
+                    # If we have any provider at all, consider it a provider
+                    is_provider = True
+                    if 'parameters' in provider:
+                        for param_name in provider['parameters']:
+                            param_is_provider = _is_parameter_provider(data, param_name)
+                            parameters.append(ParameterInfo(param_name, param_is_provider))
+                    break
+        
+        # Extract components from composite field
+        components = []
+        if 'composite' in class_info:
+            composite_data = class_info['composite']
+            for key, component_class in composite_data.items():
+                components.append(component_class)
         
         # Extract injections from injections field (first layer only)
         injections = []
