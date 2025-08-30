@@ -1,11 +1,20 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from convert import get_all_base_classes, get_class_info, get_all_child_classes
 from node_graph_parser import get_overall_graph
 import json
 import os
 
 app = FastAPI(title="Class Info API", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with your frontend's URL in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/graph")
 async def get_graph():
@@ -29,6 +38,7 @@ async def get_class_details(class_name: str):
 async def get_child_classes(parent_class: str):
     result = get_all_child_classes("data/knit.json", parent_class)
     return JSONResponse(content=json.loads(result))
+
 
 @app.post("/upload-knit-data")
 async def upload_knit_data(file: UploadFile = File(...)):
