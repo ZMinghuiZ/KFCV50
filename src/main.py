@@ -16,11 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/graph")
-async def get_graph():
-    result = get_overall_graph("data/knit.json")
-    return JSONResponse(content=json.loads(result))
-
 @app.get("/base-classes")
 async def get_base_classes():
     result = get_all_base_classes("data/knit.json")
